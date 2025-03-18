@@ -1,7 +1,7 @@
 import React,{useState} from "react";
 import { FaBars } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
-import imgUser from "../assets/user.png";
+import imgUser from "../../assets/user.png";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);

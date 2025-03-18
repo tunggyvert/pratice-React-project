@@ -1,7 +1,7 @@
 import React from 'react'
-import Hero from '../Hero'
-import Footer from '../Footer'
-import Navbar from '../Navbar'
+import Hero from '../accessories/Hero'
+import Footer from '../accessories/Footer'
+import Navbar from '../accessories/Navbar'
 import imgEx1 from '../../assets/ex1.jpeg'
 
 
