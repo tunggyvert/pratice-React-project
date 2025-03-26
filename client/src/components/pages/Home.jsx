@@ -3,6 +3,7 @@ import Hero from '../accessories/Hero'
 import Footer from '../accessories/Footer'
 import Navbar from '../accessories/Navbar'
 import imgEx1 from '../../assets/ex1.jpeg'
+import { Outlet } from 'react-router-dom'
 
 
 const Home = () => {

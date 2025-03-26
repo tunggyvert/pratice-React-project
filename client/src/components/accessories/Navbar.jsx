@@ -2,10 +2,12 @@ import React,{useState} from "react";
 import { FaBars } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import imgUser from "../../assets/user.png";
+import { useNavigate,Link } from "react-router-dom";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isAuthen, setIsAuthen] = useState(false);
+    const navigate = useNavigate();
 
     const hdlToggle = () => {
         setIsOpen(!isOpen);
@@ -75,15 +77,16 @@ const Navbar = () => {
                             </div>
                         ) : (
                             <>
-                             <button
+                             <Link to="/register"
                              className="hover:text-yellow-500 hover:scale-110 hover:-translate-y-1 duration-200">
                                 สมัครบัญชี
-                             </button>
-                             <button onClick={logIn}
+                             </Link>
+                             {/*onClick={logIn}*/}
+                             <Link 
                              className="ิborder-2 px-2 py-1 rounded-lg
                              hover:text-yellow-500 hover:scale-110 hover:-translate-y-1 duration-200">
                                 ลงชื่อเข้าใช้
-                             </button>
+                             </Link>
                             </>
                         )}
                     </div>

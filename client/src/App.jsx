@@ -1,12 +1,23 @@
 import React from 'react'
-import Home from './components/pages/Home'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import AppRoute from './RouteManage/AppRoute'
 
 const App = () => {
   return (
     <>
-    <div className="flex flex-col min-h-screen">
-     <Home />
-    </div>
+      <AppRoute />
+      <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="light" 
+/>
     </>
   )
 }
