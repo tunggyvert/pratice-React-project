@@ -8,6 +8,7 @@ const Register = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [tel,setTel] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -18,13 +19,14 @@ const Register = () => {
     setError('');
     setSuccess(false);
   
-    console.log('📤 Submitting form:', { firstName, lastName, email, password });
+    console.log('📤 Submitting form:', { firstName, lastName, email,tel, password });
   
     try {
       const response = await axios.post('http://localhost:4000/register', {
         firstName,
         lastName,
         email,
+        tel,
         password,
       });
       setSuccess(true);
@@ -91,6 +93,13 @@ const Register = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 bg-zinc-700 rounded-md outline-none focus:ring-2 focus:ring-violet-500"
+            />
+            <input
+              type="tel"
+              placeholder="telephone"
+              value={tel}
+              onChange={(e) => setTel(e.target.value)}
               className="w-full px-4 py-2 bg-zinc-700 rounded-md outline-none focus:ring-2 focus:ring-violet-500"
             />
             <input

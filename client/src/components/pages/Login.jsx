@@ -18,12 +18,26 @@ const Login = () => {
         email,
         password,
       });
-      localStorage.setItem('token', response.data.token);
+      console.log("📦 login response:", response.data); // ✅ debug ดูว่าได้อะไรกลับมาบ้าง
+      if (response.data.user) {
+        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        window.dispatchEvent(new Event("storage"));
+        const role = response.data.user.role;
+          if (role === 'admin') {
+          navigate('/admin-dashboard');
+          } else {
+          navigate('/user-dashboard'); // หรือ /user-home
+          }
+      } else {
+        localStorage.setItem('user', 'undefined'); // ป้องกัน navbar crash
+      }
+      
       toast.success('🎉 เข้าสู่ระบบสำเร็จ!', {
         position: 'top-right',
         autoClose: 3000,
       });
-      navigate('/');
+      
     } catch (err) {
       setError(err.response?.data?.error || 'เกิดข้อผิดพลาด');
     }
@@ -78,7 +92,7 @@ const Login = () => {
                 <input type="checkbox" className="accent-blue-500" />
                 Remember me
               </label>
-              <span className="text-blue-600 cursor-pointer hover:underline">Forgot password?</span>
+              <Link to='/forgot-password' className="text-blue-600 cursor-pointer hover:underline">Forgot password?</Link>
             </div>
 
             <button

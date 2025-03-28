@@ -21,7 +21,7 @@ const ForgotPassword = () => {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 animate__animated animate__fadeIn">
         <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">Reset your password</h2>
         <p className="text-gray-500 text-sm mb-6 text-center">
-          Enter your email and we’ll send you a link to reset your password.
+          ระบบจะทำการส่ง Link ในการ reset password ใน email ของคุณ
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -32,7 +32,7 @@ const ForgotPassword = () => {
             <input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder="ใส่อีเมลของคุณ"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -49,9 +49,9 @@ const ForgotPassword = () => {
         </form>
 
         <p className="mt-6 text-sm text-center text-gray-500">
-          Don’t have an account?{' '}
+          ยังไม่มีบัญชี?{' '}
           <a href="/register" className="font-semibold text-black hover:underline">
-            Get access →
+            สมัครได้ที่นี่ →
           </a>
         </p>
       </div>

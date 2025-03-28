@@ -44,7 +44,7 @@ const ResetPassword = () => {
         <h2 className="text-2xl font-bold text-white mb-6">Change Password</h2>
 
         <div className="mb-4">
-          <label className="block text-sm text-white mb-1">New Password</label>
+          <label className="block text-sm text-white mb-1">รหัสใหม่</label>
           <input
             type="password"
             placeholder="••••••••"
@@ -56,7 +56,7 @@ const ResetPassword = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-white mb-1">Confirm password</label>
+          <label className="block text-sm text-white mb-1">ยืนยันรหัส</label>
           <input
             type="password"
             placeholder="••••••••"

@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* index.css หรือ global.css */
+body {
+  font-family: 'Kanit', sans-serif;
+}
+
 html, body {
     height: 100%;
     margin: 0;
