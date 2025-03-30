@@ -28,15 +28,18 @@ const AdminLayout = () => {
     {
       section: "HOME",
       items: [
-        { to: "/admin-dashboard", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+        { to: "/", icon: <LayoutDashboard size={18} />, label: "กลับสู่หน้าเว็บไซต์" },
       ],
     },
     {
       section: "UTILITIES",
       items: [
         { to: "/admin-dashboard/manage-users", icon: <Table size={18} />, label: "จัดการบัญชี" },
-        { to: "/admin/table", icon: <Table size={18} />, label: "Table" },
-        { to: "/admin/form", icon: <FileText size={18} />, label: "คำร้องเรียน" },
+        { to: "/admin-dashboard/manage-room", icon: <Table size={18} />, label: "จัดการห้อง" },
+        { to: "/admin-dashboard/pay-management", icon: <FileText size={18} />, label: "จัดการการชำระ" },
+        { to: "/admin-dashboard/room-own", icon: <FileText size={18} />, label: "ห้องที่มีเจ้าของ" },
+        { to: "/admin-dashboard/monthly-report", icon: <FileText size={18} />, label: "จัดการสัญญา" },
+        { to: "/admin-dashboard/manage-report", icon: <FileText size={18} />, label: "จัดการคำร้อง" },
       ],
     },
   ];

@@ -28,15 +28,16 @@ const UserLayout = () => {
     {
       section: "HOME",
       items: [
-        { to: "/", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+        { to: "/", icon: <LayoutDashboard size={18} />, label: "กลับสู่หน้าเว็บไซต์" },
       ],
     },
     {
       section: "UTILITIES",
       items: [
         { to: "/user-dashboard/edit-profile", icon: <Table size={18} />, label: "จัดการบัญชี" },
-        { to: "/", icon: <Table size={18} />, label: "Table" },
-        { to: "/", icon: <FileText size={18} />, label: "คำร้องเรียน" },
+        { to: "/user-dashboard/user-room", icon: <Table size={18} />, label: "ห้องพักของคุณ" },
+        { to: "/user-dashboard/user-report", icon: <FileText size={18} />, label: "คำร้องเรียน" },
+        { to: "/user-dashboard/user-monthly",icon: <FileText size={18} />, label: "ชำระรายเดือน" },
       ],
     },
   ];

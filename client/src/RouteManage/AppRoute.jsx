@@ -13,6 +13,21 @@ import EditProfile from '../components/pages/userpages/EditProfile'
 import UserLayout from '../components/layout/UserLayout'
 import AdminLayout from '../components/layout/AdminLayout'
 import ManageUsers from '../components/pages/adminpages/ManageUsers'
+import Booking from '../components/pages/Booking'
+import StepProgress from '../components/pages/bookingpages/bookingcomponent/StepProgress'
+import Room from '../components/pages/bookingpages/Room'
+import Terms from '../components/pages/bookingpages/Terms'
+import Quote from '../components/pages/bookingpages/Quote'
+import Floor from '../components/pages/bookingpages/Floor'
+import RoomManage from '../components/pages/adminpages/RoomManage'
+import PayManagement from '../components/pages/adminpages/PayManagement'
+import Payment from '../components/pages/userpages/Payment'
+import UserRoom from '../components/pages/userpages/UserRoom'
+import UserReport from '../components/pages/userpages/UserReport'
+import AdminReportManage from '../components/pages/adminpages/AdminReportManage'
+import RoomOwnBy from '../components/pages/adminpages/RoomOwnBy'
+import AdminMonthlyManage from '../components/pages/adminpages/AdminMonthlyManage'
+import UserMonthly from '../components/pages/userpages/UserMonthly'
 
 const router = createBrowserRouter([
     {
@@ -40,6 +55,36 @@ const router = createBrowserRouter([
       element: <About />
     },
     {
+      path: 'booking',
+      element: <Booking />,
+    },
+    {
+      path:'book-process',
+      element: <StepProgress/>,
+      children: [
+        {
+          path: 'step1',
+          element: <Floor/>,
+        },
+        {
+          path: 'step2',
+          element: <Room/>,
+        },
+        {
+          path: 'step3',
+          element: <Terms/>,
+        },
+        {
+          path: 'step4',
+          element: <Quote/>,
+        },
+        {
+          path: 'step5',
+          element: <Payment/>,
+        },
+      ]
+    },
+    {
       path:"admin-dashboard",
       element: (
         <ProtectedRoute requiredRole="admin">
@@ -55,6 +100,26 @@ const router = createBrowserRouter([
           path: 'manage-users',
           element: <ManageUsers />,
         },
+        {
+          path: 'manage-room',
+          element:<RoomManage />,
+        },
+        {
+          path: 'pay-management',
+          element: <PayManagement />,
+        },
+        {
+          path:'manage-report',
+          element:<AdminReportManage/>,
+        },
+        {
+          path:'room-own',
+          element:<RoomOwnBy/>
+        },
+        {
+          path:'monthly-report',
+          element:<AdminMonthlyManage/>
+        }
       ],
     },
     {
@@ -73,6 +138,18 @@ const router = createBrowserRouter([
           path: 'edit-profile', // /user/edit-profile
           element: <EditProfile />,
         },
+        {
+          path:'user-room',
+          element:<UserRoom/>,
+        },
+        {
+          path:'user-report',
+          element:<UserReport/>,
+        },
+        {
+          path:'user-monthly',
+          element:<UserMonthly/>,
+        }
       ],
     }
   ]);
