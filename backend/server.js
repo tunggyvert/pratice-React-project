@@ -1,20 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
 
 
 const authRoutes = require('./routes/authRoutes');
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
 // เชื่อมต่อ MongoDB
-const mongoUrl = 'mongodb+srv://admin:1234@dormage.m1sid.mongodb.net/auth?retryWrites=true&w=majority&appName=Dormage';
+const mongoUrl = process.env.MONGO_URI;
 
-const Contract = require('./models/Contract');
-const MonthlyPayment = require('./models/MonthlyPayment');
-mongoose.connect(mongoUrl)
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ Connected to MongoDB'))
+  
   .catch((err) => console.log('❌ MongoDB error:', err));
 
 // Middleware

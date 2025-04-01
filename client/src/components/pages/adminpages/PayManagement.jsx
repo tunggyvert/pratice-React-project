@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const PayManagement = () => {
   const [contracts, setContracts] = useState([]);
@@ -32,10 +33,10 @@ const PayManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('✅ ยกเลิกสัญญาและคืนห้องสำเร็จ');
+      toast.success('✅ ยกเลิกสัญญาและคืนห้องสำเร็จ');
       fetchContracts();
     } catch (err) {
-      alert('❌ ไม่สามารถยกเลิกสัญญาได้');
+      toast.error('❌ ไม่สามารถยกเลิกสัญญาได้');
     }
   };
 
@@ -49,10 +50,10 @@ const PayManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert(`✅ อัปเดตสถานะเป็น ${status} แล้ว`);
+      toast.success(`✅ อัปเดตสถานะเป็น ${status} แล้ว`);
       fetchContracts();
     } catch (err) {
-      alert('❌ ไม่สามารถอัปเดตสถานะได้');
+      toast.error('❌ ไม่สามารถอัปเดตสถานะได้');
     }
   };
 
@@ -64,10 +65,10 @@ const PayManagement = () => {
       await axios.delete(`http://localhost:4000/contracts/${contractId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert('✅ ลบประวัติสัญญาสำเร็จ');
+      toast.success('✅ ลบประวัติสัญญาสำเร็จ');
       fetchContracts();
     } catch (err) {
-      alert('❌ ลบสัญญาไม่สำเร็จ');
+      toast.error('❌ ลบสัญญาไม่สำเร็จ');
       console.error(err);
     }
   };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import imgQr from '/qrpromptpay.jpg'; 
 
 const UserMonthly = () => {
   const [payments, setPayments] = useState([]);
@@ -55,6 +56,7 @@ const UserMonthly = () => {
           <h4 className="text-lg font-semibold text-blue-600">
             รวมทั้งหมด: {payment.totalAmount.toLocaleString()} บาท
           </h4>
+          <img src={imgQr} alt="QR Code" className="w-48 mt-2 rounded" />
           <p className={`mt-2 font-medium ${
             payment.paymentStatus === 'confirmed' ? 'text-green-600' : 'text-red-500'
           }`}>

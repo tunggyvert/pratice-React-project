@@ -28,6 +28,7 @@ import AdminReportManage from '../components/pages/adminpages/AdminReportManage'
 import RoomOwnBy from '../components/pages/adminpages/RoomOwnBy'
 import AdminMonthlyManage from '../components/pages/adminpages/AdminMonthlyManage'
 import UserMonthly from '../components/pages/userpages/UserMonthly'
+import AdminMonthlyStatus from '../components/pages/adminpages/AdminMonthlyStatus'
 
 const router = createBrowserRouter([
     {
@@ -119,6 +120,10 @@ const router = createBrowserRouter([
         {
           path:'monthly-report',
           element:<AdminMonthlyManage/>
+        },
+        {
+          path:'monthly-status',
+          element:<AdminMonthlyStatus/>
         }
       ],
     },

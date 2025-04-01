@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const AdminReportManage = () => {
   const [reports, setReports] = useState([]);
@@ -27,7 +28,7 @@ const AdminReportManage = () => {
       });
       fetchReports();
     } catch (err) {
-      alert('❌ อัปเดตสถานะไม่สำเร็จ');
+      toast.error('❌ อัปเดตสถานะไม่สำเร็จ');
     }
   };
 
@@ -38,10 +39,10 @@ const AdminReportManage = () => {
       await axios.delete(`http://localhost:4000/reports/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert('✅ ลบคำร้องสำเร็จ');
+      toast.success('✅ ลบคำร้องสำเร็จ');
       fetchReports();
     } catch (err) {
-      alert('❌ ลบคำร้องไม่สำเร็จ');
+      toast.error('❌ ลบคำร้องไม่สำเร็จ');
     }
   };
 

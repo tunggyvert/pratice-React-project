@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Room = require('../models/Room');
@@ -199,6 +199,18 @@ router.put('/admin/update-password/:id', authMiddleware, async (req, res) => {
   await User.findByIdAndUpdate(req.params.id, { password: hashed });
 
   res.json({ message: 'เปลี่ยนรหัสสำเร็จ' });
+});
+
+router.delete('/admin/delete-user/:id', authMiddleware, async (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Unauthorized' });
+
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'ลบผู้ใช้สำเร็จ' });
+  } catch (err) {
+    console.error('ลบผู้ใช้ล้มเหลว:', err);
+    res.status(500).json({ error: 'เกิดข้อผิดพลาดในการลบ' });
+  }
 });
 
 // GET ห้องทั้งหมด
@@ -430,28 +442,6 @@ router.delete('/contracts/cancel-payment/:id', authMiddleware, async (req, res) 
 });
 
 
-// ✅ QR Code สำหรับสัญญา
-router.post('/qrcode-from-contract', authMiddleware, async (req, res) => {
-  try {
-    const userId = req.user.userId;
-    const contract = await Contract.findOne({ user: userId });
-
-    if (!contract) return res.status(404).json({ error: 'ไม่พบสัญญา' });
-
-    const phone = '0658652046';
-    const amount = Number(contract.monthlyRent) + Number(contract.deposit || 0) + 10000;
-
-    const payload = generatePromptPayPayload(phone, amount);
-    const qr = await qrcode.toDataURL(payload);
-
-    res.json({ qrImage: qr.split(',')[1], amount });
-  } catch (err) {
-    console.error("❌ สร้าง QR ไม่สำเร็จ:", err);
-    res.status(500).json({ error: 'สร้าง QR ไม่สำเร็จ' });
-  }
-});
-
-
 router.put('/contracts/mark-paid/:id', authMiddleware, async (req, res) => {
   try {
     const updated = await Contract.findByIdAndUpdate(
@@ -601,10 +591,10 @@ router.put('/monthly-payments/message/:id', authMiddleware, async (req, res) => 
     return res.status(403).json({ error: 'Unauthorized' });
 
   try {
-    const { adminMessage,qrImageUrl } = req.body;
+    const { adminMessage } = req.body;
     const payment = await MonthlyPayment.findByIdAndUpdate(
       req.params.id,
-      { adminMessage , qrImageUrl},
+      { adminMessage},
       { new: true }
     );
 
@@ -717,6 +707,19 @@ router.post('/monthly-payments/generate-single', authMiddleware, async (req, res
   }
 });
 
+// DELETE ลบรายการบิลรายเดือน
+router.delete('/monthly-payments/:id', authMiddleware, async (req, res) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Unauthorized' });
+
+  try {
+    console.log('🗑️ ลบรายการ:', req.params.id);
+
+    await MonthlyPayment.findByIdAndDelete(req.params.id);
+    res.json({ message: 'ลบรายการสำเร็จ' });
+  } catch (err) {
+    res.status(500).json({ error: 'เกิดข้อผิดพลาดในการลบรายการ' });
+  }
+});
 
 
 

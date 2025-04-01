@@ -1,26 +1,37 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import imgGroove from '../../assets/Groove.png';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const Register = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [tel,setTel] = useState('');
+  const [tel, setTel] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
+  const emailRegex = /^[^\s@]+@(gmail\.com|hotmail\.com|outlook\.com|icloud\.com|yahoo\.com)$/;
+
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
-  
-    console.log('📤 Submitting form:', { firstName, lastName, email,tel, password });
-  
+
+    // ✅ ตรวจสอบ email format
+    if (!emailRegex.test(email)) {
+      return setError('📧 กรุณากรอกอีเมลให้ถูกต้อง');
+    }
+
+    // ✅ ตรวจสอบเบอร์โทร (ตัวเลข 10 หลัก)
+    if (!/^\d{10}$/.test(tel)) {
+      return setError('📱 เบอร์โทรต้องเป็นตัวเลข 10 หลัก');
+    }
+
     try {
       const response = await axios.post('http://localhost:4000/register', {
         firstName,
@@ -40,11 +51,10 @@ const Register = () => {
       if (err.response?.data?.error) {
         setError(err.response.data.error);
       } else {
-        setError('Unexpected error occurred');
+        setError('เกิดข้อผิดพลาด');
       }
     }
   };
-  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-900 text-white px-4">
@@ -68,8 +78,8 @@ const Register = () => {
           <p className="text-sm text-zinc-400 mb-4">
             Already have an account? <Link to="/login" className="text-violet-500 cursor-pointer hover:underline">Log in</Link>
           </p>
-          {error && <p className="text-red-400 text-sm mb-2">❌ มีผู้ใช้งานนี้แล้ว</p>}
-          {success && <p className="text-green-400 text-sm mb-2">✅สมัครบัญชีสำเร็จ!!!</p>}
+          {error && <p className="text-red-400 text-sm mb-2">❌ {error}</p>}
+          {success && <p className="text-green-400 text-sm mb-2">✅ สมัครบัญชีสำเร็จ!</p>}
 
           <form className="space-y-4" onSubmit={handleRegister}>
             <div className="flex gap-4">
@@ -79,6 +89,7 @@ const Register = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="w-1/2 px-4 py-2 bg-zinc-700 rounded-md outline-none focus:ring-2 focus:ring-violet-500"
+                required
               />
               <input
                 type="text"
@@ -86,6 +97,7 @@ const Register = () => {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="w-1/2 px-4 py-2 bg-zinc-700 rounded-md outline-none focus:ring-2 focus:ring-violet-500"
+                required
               />
             </div>
             <input
@@ -94,13 +106,20 @@ const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 bg-zinc-700 rounded-md outline-none focus:ring-2 focus:ring-violet-500"
+              required
             />
             <input
               type="tel"
-              placeholder="telephone"
+              placeholder="เบอร์โทร (10 หลัก)"
               value={tel}
-              onChange={(e) => setTel(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (/^\d*$/.test(val) && val.length <= 10) {
+                  setTel(val);
+                }
+              }}
               className="w-full px-4 py-2 bg-zinc-700 rounded-md outline-none focus:ring-2 focus:ring-violet-500"
+              required
             />
             <input
               type="password"
@@ -108,10 +127,11 @@ const Register = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 bg-zinc-700 rounded-md outline-none focus:ring-2 focus:ring-violet-500"
+              required
             />
             <div className="flex items-center gap-2 text-sm">
               <input type="checkbox" className="accent-violet-500" required />
-              <label>I agree to the <span className="text-violet-500 underline cursor-pointer">Terms & Conditions</span></label>
+              <label>ฉันยอมรับ <span className="text-violet-500 underline cursor-pointer">ข้อตกลงการใช้งาน</span></label>
             </div>
             <button
               type="submit"
@@ -119,11 +139,6 @@ const Register = () => {
             >
               Create account
             </button>
-            {/*<div className="text-center text-sm text-zinc-400 mt-4">Or register with</div>
-            <div className="flex gap-4 mt-2">
-              <button type="button" className="flex-1 py-2 bg-zinc-700 rounded-md hover:bg-zinc-600">Google</button>
-              <button type="button" className="flex-1 py-2 bg-zinc-700 rounded-md hover:bg-zinc-600">Apple</button>
-            </div>*/}
           </form>
         </div>
       </div>

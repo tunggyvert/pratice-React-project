@@ -1,7 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { format } from 'date-fns';
+import th from 'date-fns/locale/th';
+import 'react-datepicker/dist/react-datepicker.css';
 
+registerLocale('th', th);
+
+// ✅ ช่องป้อนวันที่ custom
+const CustomInput = React.forwardRef(({ value, onClick }, ref) => (
+  <input
+    type="text"
+    onClick={onClick}
+    ref={ref}
+    value={value}
+    readOnly
+    placeholder="เลือกเดือน–ปี"
+    className="w-full border border-black p-2 rounded text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+));
 
 const AdminMonthlyManage = () => {
   const [payments, setPayments] = useState([]);
@@ -9,8 +27,9 @@ const AdminMonthlyManage = () => {
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState('');
   const [month, setMonth] = useState('');
-  const [waterFee, setWaterFee] = useState(0);
-  const [electricityFee, setElectricityFee] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [waterFee, setWaterFee] = useState('');
+  const [electricityFee, setElectricityFee] = useState('');
 
   const token = localStorage.getItem('token');
 
@@ -41,10 +60,20 @@ const AdminMonthlyManage = () => {
       setRooms(paidContracts);
     } catch (err) {
       toast.error('โหลดข้อมูลห้องไม่สำเร็จ');
-      console.error(err);
     }
   };
 
+  const formatMonthThai = (monthStr) => {
+    const monthsThai = [
+      "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+      "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+    ];
+    if (!monthStr || !monthStr.includes('-')) return 'ไม่ระบุเดือน';
+    const [year, month] = monthStr.split('-');
+    const m = parseInt(month, 10);
+    if (isNaN(m) || m < 1 || m > 12) return 'เดือนไม่ถูกต้อง';
+    return `${monthsThai[m - 1]} ${year}`;
+  };
 
   const handleGenerateSingle = async () => {
     if (!selectedRoom || !month || waterFee < 0 || electricityFee < 0) {
@@ -53,25 +82,28 @@ const AdminMonthlyManage = () => {
 
     const [userId, roomId] = selectedRoom.split(',');
 
+    const isDuplicate = payments.some(
+      (p) => p.user?._id === userId && p.room?._id === roomId && p.month === month
+    );
+    if (isDuplicate) {
+      return toast.error(`❌ มีบิลของห้องนี้ในเดือน ${formatMonthThai(month)} แล้ว`);
+    }
+
     try {
-      await axios.post('http://localhost:4000/monthly-payments/generate-single', {
-        userId,
-        roomId,
-        month,
-        waterFee,
-        electricityFee
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success(`✅ สร้างบิลเดือน ${month} สำเร็จ!`);
+      await axios.post(
+        'http://localhost:4000/monthly-payments/generate-single',
+        { userId, roomId, month, waterFee, electricityFee },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success(`✅ สร้างบิลเดือน ${formatMonthThai(month)} สำเร็จ!`);
       setMonth('');
+      setSelectedDate(null);
       setWaterFee(0);
       setElectricityFee(0);
       setSelectedRoom('');
       fetchPayments();
     } catch (err) {
       toast.error('❌ เกิดข้อผิดพลาดในการสร้างบิล');
-      console.error(err);
     }
   };
 
@@ -84,7 +116,19 @@ const AdminMonthlyManage = () => {
       fetchPayments();
     } catch (err) {
       toast.error('ยืนยันไม่สำเร็จ');
-      console.error(err);
+    }
+  };
+
+  const deletePayment = async (id) => {
+    if (!window.confirm("คุณแน่ใจว่าต้องการลบรายการนี้?")) return;
+    try {
+      await axios.delete(`http://localhost:4000/monthly-payments/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success('🗑️ ลบรายการสำเร็จ');
+      fetchPayments();
+    } catch (err) {
+      toast.error('❌ ลบไม่สำเร็จ');
     }
   };
 
@@ -93,10 +137,8 @@ const AdminMonthlyManage = () => {
     if (!message) return toast.warn('กรุณาใส่ข้อความก่อน');
 
     try {
-      const qrImageUrl = `${window.location.origin}/qrpromptpay.jpg`;
       await axios.put(`http://localhost:4000/monthly-payments/message/${id}`, {
         adminMessage: message,
-        qrImageUrl
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -105,10 +147,8 @@ const AdminMonthlyManage = () => {
       fetchPayments();
     } catch (err) {
       toast.error('ส่งข้อความไม่สำเร็จ');
-      console.error(err);
     }
   };
-
 
   return (
     <div className="max-w-5xl mx-auto p-6">
@@ -121,7 +161,7 @@ const AdminMonthlyManage = () => {
           <select
             value={selectedRoom}
             onChange={(e) => setSelectedRoom(e.target.value)}
-            className="border p-2 rounded w-full"
+            className="w-full border border-black p-2 rounded text-sm bg-white"
           >
             <option value="">เลือกห้องพัก</option>
             {rooms.map(r => (
@@ -133,20 +173,29 @@ const AdminMonthlyManage = () => {
             ))}
           </select>
 
-          <input
-            type="text"
-            placeholder="เดือน (เช่น เมษายน 2025)"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="border p-2 rounded w-full"
-          />
+          {/* ✅ DatePicker UI ตรงตำแหน่งไม่เพี้ยน */}
+          <div className="w-full relative z-10">
+            <DatePicker
+              locale="th"
+              selected={selectedDate}
+              onChange={(date) => {
+                setSelectedDate(date);
+                setMonth(format(date, 'yyyy-MM'));
+              }}
+              dateFormat="MMMM yyyy"
+              showMonthYearPicker
+              popperPlacement="bottom-start"
+              popperModifiers={[{ name: 'offset', options: { offset: [0, 6] } }]}
+              customInput={<CustomInput />}
+            />
+          </div>
 
           <input
             type="number"
             placeholder="ค่าน้ำ (บาท)"
             value={waterFee}
             onChange={(e) => setWaterFee(Number(e.target.value))}
-            className="border p-2 rounded w-full"
+            className="w-full border border-black p-2 rounded text-sm bg-white"
           />
 
           <input
@@ -154,7 +203,7 @@ const AdminMonthlyManage = () => {
             placeholder="ค่าไฟ (บาท)"
             value={electricityFee}
             onChange={(e) => setElectricityFee(Number(e.target.value))}
-            className="border p-2 rounded w-full"
+            className="w-full border border-black p-2 rounded text-sm bg-white"
           />
         </div>
 
@@ -170,10 +219,9 @@ const AdminMonthlyManage = () => {
         <div key={payment._id} className="bg-white shadow-md rounded-lg p-4 mb-4">
           <p>👤 {payment.user?.firstName} {payment.user?.lastName}</p>
           <p>🏠 ห้อง {payment.room?.roomNumber}</p>
-          <p>📅 เดือน: {payment.month}</p>
+          <p>📅 เดือน: {formatMonthThai(payment.month)}</p>
           <p>ยอดรวม: {payment.totalAmount.toLocaleString()} บาท</p>
-          <p className={`font-semibold ${payment.paymentStatus === 'confirmed' ? 'text-green-600' : 'text-red-500'
-            }`}>
+          <p className={`font-semibold ${payment.paymentStatus === 'confirmed' ? 'text-green-600' : 'text-red-500'}`}>
             สถานะ: {payment.paymentStatus}
           </p>
 
@@ -181,23 +229,24 @@ const AdminMonthlyManage = () => {
             <img src={`http://localhost:4000/${payment.receiptImage}`} className="w-48 mt-2 rounded" alt="receipt" />
           )}
 
-          {payment.qrImageUrl && (
-            <div className="mt-4">
-              <h4 className="font-semibold text-gray-700">📱 QR Code ที่ส่งไป:</h4>
-              <img src={payment.qrImageUrl} className="w-48 mt-2 rounded" alt="PromptPay QR" />
-            </div>
-          )}
+          <div className="flex flex-col sm:flex-row gap-2 mt-3">
+            {payment.paymentStatus === 'pending' && (
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                onClick={() => confirmPayment(payment._id)}
+              >
+                ✅ ยืนยันการชำระเงิน
+              </button>
+            )}
 
-          {payment.paymentStatus === 'pending' && (
             <button
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mt-2"
-              onClick={() => confirmPayment(payment._id)}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+              onClick={() => deletePayment(payment._id)}
             >
-              ✅ ยืนยันการชำระเงิน
+              🗑️ ลบรายการนี้
             </button>
-          )}
+          </div>
 
-          {/* ✅ ส่วนที่หายไป (ช่องข้อความเตือน) */}
           <div className="mt-3">
             <input
               type="text"

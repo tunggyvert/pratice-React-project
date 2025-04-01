@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import imgQr from '/qrpromptpay.jpg'; 
+import { toast } from 'react-toastify';
 
 const Payment = () => {
   const [totalAmount, setTotalAmount] = useState(0);
@@ -76,11 +77,11 @@ const Payment = () => {
           }
         }
       );
-      alert('✅ อัปโหลดใบเสร็จแล้ว รอการยืนยันจากแอดมิน');
+      toast.success('✅ อัปโหลดใบเสร็จแล้ว รอการยืนยันจากแอดมิน');
       localStorage.removeItem("contract");
       navigate('/');
     } catch (err) {
-      alert('❌ อัปโหลดใบเสร็จไม่สำเร็จ');
+      toast.error('❌ อัปโหลดใบเสร็จไม่สำเร็จ');
       console.error(err);
     }
   };
@@ -94,12 +95,12 @@ const Payment = () => {
       await axios.delete(`http://localhost:4000/contracts/cancel-payment/${contract._id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert('ยกเลิกสัญญาและคืนสถานะห้องเรียบร้อยแล้ว');
+      toast.success('ยกเลิกสัญญาและคืนสถานะห้องเรียบร้อยแล้ว');
       localStorage.removeItem("contract");
       navigate('/');
     } catch (err) {
       const errMsg = err.response?.data?.error || err.message;
-      alert(`ไม่สามารถยกเลิกรายการได้: ${errMsg}`);
+      toast.error(`ไม่สามารถยกเลิกรายการได้: ${errMsg}`);
       console.error(err);
     }
   };

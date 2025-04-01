@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Quote = () => {
   const navigate = useNavigate();
@@ -32,14 +33,15 @@ const Quote = () => {
   
       const newContract = res.data.contract; // ✅ ใช้สัญญาจริงที่ได้จาก backend
   
-      alert("✅ สร้างสัญญาเช่าสำเร็จ!");
+      toast.success("✅ สร้างสัญญาเช่าสำเร็จ!");
       navigate('/book-process/step5', { state: { contract: newContract } });
     } catch (err) {
+      toast.dismiss(loadingToast);
       if (err.response) {
-        alert(`❌ ${err.response.data.error}`);
+        toast.error(`❌ ${err.response.data.error}`);
         console.error("❌ Backend Error:", err.response.data.error);
       } else {
-        alert(`❌ Network Error: ${err.message}`);
+        toast.error(`❌ Network Error: ${err.message}`);
         console.error("❌ Network Error:", err.message);
       }
     } finally {
@@ -68,14 +70,14 @@ const Quote = () => {
             <span>{(1500).toLocaleString()} บาท</span>
           </li>
           <li className="border-t mt-2 pt-2 flex justify-between font-bold">
-            <span>ยอดรวม:</span>
+            <span>ยอดรวมค่าใช้จ่ายระหว่างในสัญญา:</span>
             <span>{totalPrice.toLocaleString()} บาท</span>
           </li>
         </ul>
       </div>
 
       <div className="mt-4 bg-white p-4 rounded-lg shadow-md">
-        <h3 className="text-lg font-bold text-gray-700">ต้องชำระค่ามัดจำก่อน</h3>
+        <h3 className="text-lg font-bold text-gray-700">ยอมรับในสัญญา</h3>
         <div className="flex items-center mt-2">
           <input
             type="checkbox"
@@ -85,7 +87,7 @@ const Quote = () => {
             onChange={() => setDepositPaid(!depositPaid)}
           />
           <label htmlFor="payDeposit" className="ml-2 text-gray-700 cursor-pointer">
-            ฉันได้ชำระค่ามัดจำแล้ว
+            ยินยอม
           </label>
         </div>
       </div>
