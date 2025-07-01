@@ -3,9 +3,6 @@ import axios from 'axios';
 
 const UserRoom = () => {
   const [contract, setContract] = useState(null);
-  const [receipt, setReceipt] = useState(null);
-  const [qrImage, setQrImage] = useState('');
-  const [amount, setAmount] = useState(0);
 
   const token = localStorage.getItem('token');
 
